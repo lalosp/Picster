@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=0.1
+Name=Picster
+Comment=My own gallery app
+Exec=java App
+Icon=/home/lalospx/src/Picster/icon.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Path=/home/lalospx/src/Picster/
+StartupWMClass=App
