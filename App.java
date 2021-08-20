@@ -8,7 +8,7 @@ import java.awt.Image;
 
 // TODO: scale each image to the window dimensions
 // TODO: add cropping
-// TODO: setup github integration
+// TODO: streamline folder discovery on linux
 public class App extends JFrame implements KeyListener {
 	private final String APP_NAME = "Picster";
 	
@@ -28,6 +28,7 @@ public class App extends JFrame implements KeyListener {
 		label = new JLabel(icon);
 		add(label);
 		addKeyListener(this);
+		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle(APP_NAME + " | " + images.getFileName());
 		pack();
