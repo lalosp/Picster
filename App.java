@@ -1,16 +1,38 @@
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JMenuBar;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.awt.Image;
 
+import static javax.swing.JOptionPane.showMessageDialog;
 
-// TODO: scale each image to the window dimensions
+
+// TODO: fix image scaling issues
 // TODO: add cropping
 // TODO: streamline folder discovery on linux
-public class App extends JFrame implements KeyListener {
+public class App extends JFrame implements KeyListener, ActionListener {
 	private final String APP_NAME = "Picster";
+	
+	// menubar
+	private final JMenuBar menubar = new JMenuBar();
+	
+	// menus
+	private final JMenu menuFile = new JMenu("File");
+	private final JMenu menuEdit = new JMenu("Edit");
+	private final JMenu menuHelp = new JMenu("Help");
+	
+	// menu items
+	private final JMenuItem miOpenFile = new JMenuItem("Open File");
+	private final JMenuItem miOpenDirectory = new JMenuItem("Open Directory");
+	private final JMenuItem miSave = new JMenuItem("Save");
+	private final JMenuItem miCrop = new JMenuItem("Crop");
+	private final JMenuItem miAbout = new JMenuItem("About");
 	
 	private ImageIcon icon;
 	private JLabel label;
@@ -18,20 +40,47 @@ public class App extends JFrame implements KeyListener {
 	private int fWidth;
 	private int fHeight;
 	
+	int counter = 0;
+	
 	public void setup() {
 		fWidth = 1000;
 		fHeight = 600;
-		setSize(fWidth, fHeight);
 		images = new Carrousel();
 		images.setup();
 		icon = scaleImage(new ImageIcon(images.getImage("start")), fWidth, fHeight);
 		label = new JLabel(icon);
+		
+		// actiolisteners for menu items
+		miOpenFile.addActionListener(this);
+		miOpenDirectory.addActionListener(this);
+		miSave.addActionListener(this);
+		miCrop.addActionListener(this);
+		miAbout.addActionListener(this);
+		
+		// adds menuitems to menu
+		menuFile.add(miOpenFile);
+		menuFile.add(miOpenDirectory);
+		menuFile.add(miSave);
+		
+		menuEdit.add(miCrop);
+		
+		menuHelp.add(miAbout);
+		
+		// add menu to menubar
+		menubar.add(menuFile);
+		menubar.add(menuEdit);
+		menubar.add(menuHelp);
+		
+		// add menubar to frame
+		setJMenuBar(menubar);
+		
 		add(label);
 		addKeyListener(this);
-		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle(APP_NAME + " | " + images.getFileName());
 		pack();
+		setSize(fWidth, fHeight);
+		setLocationRelativeTo(null);
 	}
 	
 	public void run() {
@@ -47,6 +96,7 @@ public class App extends JFrame implements KeyListener {
 			label.setIcon(scaleImage(new ImageIcon(images.getImage("next")),fWidth ,fHeight ));
 		}
 		
+		setSize(fWidth, fHeight);
 		setTitle(APP_NAME + " | " +images.getFileName());
 	}
 	
@@ -55,26 +105,28 @@ public class App extends JFrame implements KeyListener {
 	public void keyTyped(KeyEvent e) {}
 	
 	// Fix scaling problems
-	public ImageIcon scaleImage(ImageIcon icon, int windowWidth, int windowHeight) {
-		int imgWidth = icon.getIconWidth();
-		int imgHeight = icon.getIconHeight();
+	public ImageIcon scaleImage(ImageIcon icon, int winWidth, int winHeight) {
+		float imgWidth = icon.getIconWidth();
+		float imgHeight = icon.getIconHeight();
 		
-		int w2hRatio = imgWidth / imgHeight;
-		int h2wRatio = imgHeight / imgWidth;
+		float w2hRatio = imgHeight / imgWidth;
+		float h2wRatio = imgWidth / imgHeight;
 		
-		if (imgWidth > imgHeight) {
-			if (imgWidth > windowWidth) {
-				imgWidth = windowWidth;
-				imgHeight = imgWidth * w2hRatio;
-			}
+		// scaling code goes here
+		imgHeight = winHeight;
+		imgWidth = imgHeight * h2wRatio;
+		
+		return new ImageIcon(icon.getImage().getScaledInstance((int) imgWidth, (int) imgHeight, Image.SCALE_DEFAULT));
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		String action = e.getActionCommand();
+		
+		if (action == "About") {
+			showMessageDialog(null, "Picster by Eduardo Sandoval");
+		} else {
+			showMessageDialog(null, action + " selected");
 		}
-		if (imgHeight > imgWidth) {
-			if (imgHeight > windowHeight) {
-				imgHeight = windowHeight;
-				imgWidth = imgHeight * h2wRatio;
-			}
-		}
-		return new ImageIcon(icon.getImage().getScaledInstance(imgWidth, imgHeight, Image.SCALE_DEFAULT));
 	}
 	
 	public static void main(String[] args) {
