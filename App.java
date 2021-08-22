@@ -4,18 +4,19 @@ import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JMenuBar;
+import javax.swing.JFileChooser;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Image;
+import java.io.File;
 
 import static javax.swing.JOptionPane.showMessageDialog;
 
 
 // TODO: fix image scaling issues
 // TODO: add cropping
-// TODO: streamline folder discovery on linux
 public class App extends JFrame implements KeyListener, ActionListener {
 	private final String APP_NAME = "Picster";
 	
@@ -39,6 +40,7 @@ public class App extends JFrame implements KeyListener, ActionListener {
 	private Carrousel images;
 	private int fWidth;
 	private int fHeight;
+	private JFileChooser fileChooser;
 	
 	int counter = 0;
 	
@@ -49,6 +51,8 @@ public class App extends JFrame implements KeyListener, ActionListener {
 		images.setup();
 		icon = scaleImage(new ImageIcon(images.getImage("start")), fWidth, fHeight);
 		label = new JLabel(icon);
+		fileChooser = new JFileChooser();
+		fileChooser.setCurrentDirectory(new File(System.getProperty("user.home") + "/Pictures/"));
 		
 		// actiolisteners for menu items
 		miOpenFile.addActionListener(this);
@@ -91,13 +95,12 @@ public class App extends JFrame implements KeyListener, ActionListener {
 		String key = e.getKeyText(e.getKeyCode());
 		if (key == "Left") {
 			label.setIcon(scaleImage(new ImageIcon(images.getImage("before")),fWidth ,fHeight));
-		}
-		if (key == "Right") {
+		} else if (key == "Right") {
 			label.setIcon(scaleImage(new ImageIcon(images.getImage("next")),fWidth ,fHeight ));
 		}
 		
 		setSize(fWidth, fHeight);
-		setTitle(APP_NAME + " | " +images.getFileName());
+		setTitle(APP_NAME + " | " + images.getFileName());
 	}
 	
 	public void keyReleased(KeyEvent e) {}
@@ -124,8 +127,37 @@ public class App extends JFrame implements KeyListener, ActionListener {
 		
 		if (action == "About") {
 			showMessageDialog(null, "Picster by Eduardo Sandoval");
-		} else {
-			showMessageDialog(null, action + " selected");
+		} else if (action == "Open File") {
+			fileChooser.setDialogTitle("Choose file");
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			int result = fileChooser.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = fileChooser.getSelectedFile();
+				images.fillOneFile(System.getProperty("user.home") + "/Pictures/", selectedFile.toString());
+				
+				label.setIcon(scaleImage(new ImageIcon(images.getImage("current")),fWidth ,fHeight ));
+				setSize(fWidth, fHeight);
+				setTitle(APP_NAME + " | " + images.getFileName());
+			}
+		} else if (action == "Open Directory") {
+			fileChooser.setDialogTitle("Choose directory");
+			fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			//fileChooser.setAcceptAllFileFilterUsed(false);
+			int result = fileChooser.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = fileChooser.getSelectedFile();
+				images.fillFromDir(selectedFile.toString());
+				
+				label.setIcon(scaleImage(new ImageIcon(images.getImage("start")),fWidth ,fHeight ));
+				setSize(fWidth, fHeight);
+				setTitle(APP_NAME + " | " + images.getFileName());
+			}
+		} else if (action == "Save") {
+			
+		} else if (action == "Crop") {
+			
 		}
 	}
 	
