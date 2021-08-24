@@ -43,6 +43,9 @@ public class App extends JFrame implements KeyListener, ActionListener, MouseLis
 	private int fWidth;
 	private int fHeight;
 	private JFileChooser fileChooser;
+	// add cropping variables
+	private int startx;
+	//private int crop
 	
 	int counter = 0;
 	
