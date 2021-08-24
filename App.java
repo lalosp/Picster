@@ -9,6 +9,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 import java.awt.Image;
 import java.io.File;
 
@@ -17,7 +19,7 @@ import static javax.swing.JOptionPane.showMessageDialog;
 
 // TODO: fix image scaling issues
 // TODO: add cropping
-public class App extends JFrame implements KeyListener, ActionListener {
+public class App extends JFrame implements KeyListener, ActionListener, MouseListener {
 	private final String APP_NAME = "Picster";
 	
 	// menubar
@@ -80,6 +82,7 @@ public class App extends JFrame implements KeyListener, ActionListener {
 		
 		add(label);
 		addKeyListener(this);
+		addMouseListener(this);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle(APP_NAME + " | " + images.getFileName());
 		pack();
@@ -159,6 +162,20 @@ public class App extends JFrame implements KeyListener, ActionListener {
 		} else if (action == "Crop") {
 			
 		}
+	}
+	
+	public void mouseClicked(MouseEvent e) {}
+	
+	public void mouseExited(MouseEvent e) {}
+	
+	public void mousePressed(MouseEvent e) {
+		System.out.println("Click: x: " + e.getX() + " y: " + e.getY());
+	}
+	
+	public void mouseEntered(MouseEvent e) {}
+	
+	public void mouseReleased(MouseEvent e) {
+		System.out.println("Release: x: " + e.getX() + " y: " + e.getY());
 	}
 	
 	public static void main(String[] args) {
